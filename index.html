@@ -404,17 +404,32 @@
             let t = trabajadores.find(x => x.id === document.getElementById('fichajeTrabajador').value);
             let o = obras.find(x => x.id === document.getElementById('fichajeObra').value);
             if(t && o) {
-                let h = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                await window.fs.addDoc(window.fs.collection(window.db, "fichajes"), { trabajador: t.nombre, obra: o.nombre, tipo, hora: h });
-                alert(`Fichaje de ${tipo} guardado.`);
+                let ahora = new Date();
+                let fecha = ahora.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                let hora = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                await window.fs.addDoc(window.fs.collection(window.db, "fichajes"), { 
+                    trabajador: t.nombre, 
+                    obra: o.nombre, 
+                    tipo, 
+                    fecha,
+                    hora 
+                });
+                alert(`Fichaje de ${tipo} guardado (${fecha} a las ${hora}).`);
             }
         }
 
         function renderFichajes() {
             document.getElementById('historialFichajes').innerHTML = fichajes.map(f => `
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs shadow-sm">
-                    <div><p class="font-bold text-sm text-slate-800">${f.trabajador}</p><p class="text-slate-500">🏗️ ${f.obra}</p></div>
-                    <span class="font-bold px-2.5 py-1 rounded-lg ${f.tipo === 'ENTRADA' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${f.tipo} (${f.hora})</span>
+                    <div>
+                        <p class="font-bold text-sm text-slate-800">${f.trabajador}</p>
+                        <p class="text-slate-500">🏗️ ${f.obra}</p>
+                        ${f.fecha ? `<p class="text-[10px] text-slate-400 font-semibold mt-0.5">📅 ${f.fecha}</p>` : ''}
+                    </div>
+                    <span class="font-bold px-2.5 py-1 rounded-lg text-right ${f.tipo === 'ENTRADA' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                        ${f.tipo}<br><span class="text-[10px] font-normal">${f.hora}</span>
+                    </span>
                 </div>
             `).join('');
         }
