@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Reformas Mármol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
@@ -28,132 +28,132 @@
         .tab-content.active { display: block; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-24">
+<body class="bg-slate-100 text-slate-800 font-sans pb-24 w-full min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-red-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+    <!-- Header Móvil -->
+    <header class="bg-red-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center w-full">
         <div>
-            <h1 class="text-xl font-bold tracking-wide">REFORMAS MÁRMOL</h1>
-            <p class="text-xs text-red-200">Control de Personal y Obras</p>
+            <h1 class="text-lg font-bold tracking-wide">REFORMAS MÁRMOL</h1>
+            <p class="text-xs text-red-200">Control de Personal</p>
         </div>
-        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-800 border border-red-400 text-xs px-3 py-2 rounded-lg font-bold shadow">
+        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-800 border border-red-400 text-xs px-3 py-2 rounded-lg font-bold shadow text-white">
             🔒 Vista Consulta
         </button>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto p-4">
+    <!-- Contenedor Principal (100% Pantalla Móvil) -->
+    <main class="w-full p-4 space-y-4 max-w-lg mx-auto">
 
         <!-- TAB 1: DESPLIEGUE DIARIO -->
         <div id="tab-despliegue" class="tab-content active space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Despliegue</label>
-                <input type="date" id="fechaDespliegue" class="w-full p-2 border rounded-lg bg-slate-50 text-sm font-semibold" onchange="cargarDespliegue()">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha de Despliegue</label>
+                <input type="date" id="fechaDespliegue" class="w-full p-3 border rounded-xl bg-slate-50 text-base font-bold text-slate-700" onchange="cargarDespliegue()">
             </div>
-            <div id="listaObrasDespliegue" class="space-y-4"></div>
+            <div id="listaObrasDespliegue" class="space-y-4 w-full"></div>
         </div>
 
         <!-- TAB 2: PLANTILLA -->
         <div id="tab-plantilla" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-700">Trabajadores</h2>
-                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow">+ Añadir Operario</button>
+                <h2 class="text-xl font-bold text-slate-800">Trabajadores</h2>
+                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3 py-2.5 rounded-xl font-bold shadow">+ Operario</button>
             </div>
-            <div id="listaPlantilla" class="space-y-2"></div>
+            <div id="listaPlantilla" class="space-y-3 w-full"></div>
         </div>
 
         <!-- TAB 3: OBRAS -->
         <div id="tab-obras" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-700">Obras</h2>
-                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow">+ Nueva Obra</button>
+                <h2 class="text-xl font-bold text-slate-800">Obras</h2>
+                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3 py-2.5 rounded-xl font-bold shadow">+ Nueva Obra</button>
             </div>
-            <div id="listaObras" class="space-y-3"></div>
+            <div id="listaObras" class="space-y-3 w-full"></div>
         </div>
 
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
-            <h2 class="text-lg font-bold text-slate-700">Fichajes de Hoy</h2>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <select id="fichajeTrabajador" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
-                <select id="fichajeObra" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
+            <h2 class="text-xl font-bold text-slate-800">Fichajes de Hoy</h2>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3 w-full">
+                <select id="fichajeTrabajador" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
+                <select id="fichajeObra" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
                 <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button onclick="registrarFichaje('ENTRADA')" class="bg-emerald-600 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Entrada 🟢</button>
-                    <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Salida 🔴</button>
+                    <button onclick="registrarFichaje('ENTRADA')" class="bg-emerald-600 text-white py-3 rounded-xl text-sm font-bold shadow">Fichar Entrada 🟢</button>
+                    <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 text-white py-3 rounded-xl text-sm font-bold shadow">Fichar Salida 🔴</button>
                 </div>
             </div>
-            <div id="historialFichajes" class="space-y-2"></div>
+            <div id="historialFichajes" class="space-y-2 w-full"></div>
         </div>
 
         <!-- TAB 5: AJUSTES -->
         <div id="tab-ajustes" class="tab-content space-y-4">
-            <h2 class="text-lg font-bold text-slate-700">Ajustes</h2>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <p class="text-xs text-slate-500">Estado de la sesión:</p>
-                <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-2 rounded-lg text-sm font-bold">Cerrar Sesión Admin</button>
+            <h2 class="text-xl font-bold text-slate-800">Ajustes</h2>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3 w-full">
+                <p class="text-sm text-slate-600 font-medium">Opciones de Administrador:</p>
+                <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-3 rounded-xl text-sm font-bold">Cerrar Sesión Admin</button>
             </div>
         </div>
 
     </main>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 shadow-lg z-40 max-w-md mx-auto">
-        <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center text-xs font-semibold">
-            <span class="text-lg">📅</span> Diario
+    <!-- Barra Inferior Grande para Móvil -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-2 shadow-2xl z-40 w-full">
+        <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center py-1 px-2 text-xs font-bold">
+            <span class="text-xl">📅</span> Diario
         </button>
-        <button onclick="cambiarTab('plantilla')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
-            <span class="text-lg">👷</span> Plantilla
+        <button onclick="cambiarTab('plantilla')" class="nav-btn text-slate-400 flex flex-col items-center py-1 px-2 text-xs font-bold">
+            <span class="text-xl">👷</span> Plantilla
         </button>
-        <button onclick="cambiarTab('obras')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
-            <span class="text-lg">🏗️</span> Obras
+        <button onclick="cambiarTab('obras')" class="nav-btn text-slate-400 flex flex-col items-center py-1 px-2 text-xs font-bold">
+            <span class="text-xl">🏗️</span> Obras
         </button>
-        <button onclick="cambiarTab('fichajes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
-            <span class="text-lg">⏱️</span> Fichajes
+        <button onclick="cambiarTab('fichajes')" class="nav-btn text-slate-400 flex flex-col items-center py-1 px-2 text-xs font-bold">
+            <span class="text-xl">⏱️</span> Fichajes
         </button>
-        <button onclick="cambiarTab('ajustes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
-            <span class="text-lg">⚙️</span> Ajustes
+        <button onclick="cambiarTab('ajustes')" class="nav-btn text-slate-400 flex flex-col items-center py-1 px-2 text-xs font-bold">
+            <span class="text-xl">⚙️</span> Ajustes
         </button>
     </nav>
 
     <!-- Modal Admin -->
-    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+    <div id="adminModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-2xl">
             <h3 class="text-lg font-bold text-slate-800">Acceso Administrador</h3>
-            <input type="password" id="inputPin" placeholder="PIN (1234)" class="w-full p-3 border rounded-xl text-center text-lg font-bold">
+            <input type="password" id="inputPin" placeholder="PIN (1234)" class="w-full p-3 border rounded-xl text-center text-xl font-bold tracking-widest">
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="cerrarAdminModal()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
-                <button onclick="verificarPin()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Entrar</button>
+                <button onclick="cerrarAdminModal()" class="bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-bold">Cancelar</button>
+                <button onclick="verificarPin()" class="bg-red-600 text-white py-3 rounded-xl text-sm font-bold">Entrar</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Trabajador -->
-    <div id="modalTrabajador" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+    <div id="modalTrabajador" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-2xl">
             <h3 class="text-lg font-bold text-slate-800">Nuevo Operario</h3>
-            <input type="text" id="nombreTrabajador" placeholder="Nombre completo" class="w-full p-2.5 border rounded-xl text-sm">
-            <select id="especialidadTrabajador" class="w-full p-2.5 border rounded-xl text-sm">
+            <input type="text" id="nombreTrabajador" placeholder="Nombre completo" class="w-full p-3 border rounded-xl text-sm">
+            <select id="especialidadTrabajador" class="w-full p-3 border rounded-xl text-sm font-medium">
                 <option value="Albañil">Albañil</option>
                 <option value="Fontanero">Fontanero</option>
                 <option value="Pintor">Pintor</option>
                 <option value="Peón">Peón</option>
             </select>
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="cerrarModalTrabajador()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
-                <button onclick="guardarTrabajador()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
+                <button onclick="cerrarModalTrabajador()" class="bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-bold">Cancelar</button>
+                <button onclick="guardarTrabajador()" class="bg-red-600 text-white py-3 rounded-xl text-sm font-bold">Guardar</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Obra -->
-    <div id="modalObra" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+    <div id="modalObra" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-2xl">
             <h3 class="text-lg font-bold text-slate-800">Nueva Obra</h3>
-            <input type="text" id="nombreObraInput" placeholder="Nombre de Obra" class="w-full p-2.5 border rounded-xl text-sm">
-            <input type="text" id="direccionObraInput" placeholder="Dirección" class="w-full p-2.5 border rounded-xl text-sm">
+            <input type="text" id="nombreObraInput" placeholder="Nombre de Obra" class="w-full p-3 border rounded-xl text-sm">
+            <input type="text" id="direccionObraInput" placeholder="Dirección" class="w-full p-3 border rounded-xl text-sm">
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="cerrarModalObra()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
-                <button onclick="guardarObra()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
+                <button onclick="cerrarModalObra()" class="bg-slate-200 text-slate-700 py-3 rounded-xl text-sm font-bold">Cancelar</button>
+                <button onclick="guardarObra()" class="bg-red-600 text-white py-3 rounded-xl text-sm font-bold">Guardar</button>
             </div>
         </div>
     </div>
@@ -205,7 +205,7 @@
             renderPlantilla();
             renderObras();
             cargarDespliegue();
-            alert("Sesión admin cerrada");
+            alert("Sesión cerrada");
         }
 
         function cambiarTab(id) {
@@ -242,22 +242,22 @@
 
         function renderPlantilla() {
             const cont = document.getElementById('listaPlantilla');
-            if(trabajadores.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No hay operarios registrados aún.</p>';
+            if(trabajadores.length === 0) return cont.innerHTML = '<p class="text-sm text-slate-400 text-center py-6">No hay operarios registrados aún.</p>';
             cont.innerHTML = trabajadores.map(t => `
-                <div class="bg-white p-3 rounded-xl border flex justify-between items-center">
-                    <div><p class="font-bold text-sm">${t.nombre}</p><p class="text-xs text-slate-500">${t.especialidad}</p></div>
-                    ${isAdmin ? `<button onclick="borrarTrabajador('${t.id}')" class="text-red-500 text-xs">🗑️</button>` : ''}
+                <div class="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                    <div><p class="font-bold text-base text-slate-800">${t.nombre}</p><p class="text-xs text-slate-500 font-medium">${t.especialidad}</p></div>
+                    ${isAdmin ? `<button onclick="borrarTrabajador('${t.id}')" class="text-red-500 text-base p-1">🗑️</button>` : ''}
                 </div>
             `).join('');
         }
 
         function renderObras() {
             const cont = document.getElementById('listaObras');
-            if(obras.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No hay obras registradas aún.</p>';
+            if(obras.length === 0) return cont.innerHTML = '<p class="text-sm text-slate-400 text-center py-6">No hay obras registradas aún.</p>';
             cont.innerHTML = obras.map(o => `
-                <div class="bg-white p-3 rounded-xl border flex justify-between items-center">
-                    <div><p class="font-bold text-sm">${o.nombre}</p><p class="text-xs text-slate-500">📍 ${o.direccion}</p></div>
-                    ${isAdmin ? `<button onclick="borrarObra('${o.id}')" class="text-red-500 text-xs">🗑️</button>` : ''}
+                <div class="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                    <div><p class="font-bold text-base text-slate-800">${o.nombre}</p><p class="text-xs text-slate-500 font-medium">📍 ${o.direccion}</p></div>
+                    ${isAdmin ? `<button onclick="borrarObra('${o.id}')" class="text-red-500 text-base p-1">🗑️</button>` : ''}
                 </div>
             `).join('');
         }
@@ -265,21 +265,21 @@
         function cargarDespliegue() {
             const fecha = document.getElementById('fechaDespliegue').value;
             const cont = document.getElementById('listaObrasDespliegue');
-            if(obras.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Añade obras desde la pestaña "Obras".</p>';
+            if(obras.length === 0) return cont.innerHTML = '<p class="text-sm text-slate-400 text-center py-6">Añade obras desde la pestaña "Obras".</p>';
             
             let datosDia = asignaciones[fecha] || {};
             cont.innerHTML = obras.map(o => {
                 let ids = datosDia[o.id] || [];
                 let listaNombres = ids.map(id => {
                     let t = trabajadores.find(x => x.id === id);
-                    return t ? `<span class="bg-red-50 text-red-700 border border-red-200 text-xs px-2 py-1 rounded-lg font-semibold mr-1 mb-1 inline-block">${t.nombre}</span>` : '';
+                    return t ? `<span class="bg-red-50 text-red-700 border border-red-200 text-xs px-2.5 py-1.5 rounded-lg font-bold mr-1 mb-1 inline-block">${t.nombre}</span>` : '';
                 }).join('');
 
                 return `
-                    <div class="bg-white p-4 rounded-xl border space-y-2">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3 shadow-sm">
                         <div class="flex justify-between items-start">
-                            <div><p class="font-bold text-sm">🏗️ ${o.nombre}</p><p class="text-xs text-slate-500">${o.direccion}</p></div>
-                            ${isAdmin ? `<button onclick="asignarOperario('${fecha}', '${o.id}')" class="bg-slate-100 text-xs px-2 py-1 rounded-lg font-bold">+ Asignar</button>` : ''}
+                            <div><p class="font-bold text-base text-slate-800">🏗️ ${o.nombre}</p><p class="text-xs text-slate-500">${o.direccion}</p></div>
+                            ${isAdmin ? `<button onclick="asignarOperario('${fecha}', '${o.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold border">+ Asignar</button>` : ''}
                         </div>
                         <div class="pt-2 border-t flex flex-wrap">${listaNombres || '<span class="text-xs text-slate-400 italic">Sin operarios asignados</span>'}</div>
                     </div>
@@ -347,4 +347,22 @@
 
         async function registrarFichaje(tipo) {
             let t = trabajadores.find(x => x.id === document.getElementById('fichajeTrabajador').value);
-            let o = obras.find(x => x.id === document.getElementById('fichajeObra').value
+            let o = obras.find(x => x.id === document.getElementById('fichajeObra').value);
+            if(t && o) {
+                let h = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                await window.fs.addDoc(window.fs.collection(window.db, "fichajes"), { trabajador: t.nombre, obra: o.nombre, tipo, hora: h });
+                alert(`Fichaje de ${tipo} guardado.`);
+            }
+        }
+
+        function renderFichajes() {
+            document.getElementById('historialFichajes').innerHTML = fichajes.map(f => `
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs shadow-sm">
+                    <div><p class="font-bold text-sm text-slate-800">${f.trabajador}</p><p class="text-slate-500">🏗️ ${f.obra}</p></div>
+                    <span class="font-bold px-2.5 py-1 rounded-lg ${f.tipo === 'ENTRADA' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${f.tipo} (${f.hora})</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
