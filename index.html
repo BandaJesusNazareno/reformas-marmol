@@ -30,13 +30,24 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24 w-full min-h-screen">
 
-    <!-- Header Móvil -->
-    <header class="bg-red-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center w-full">
-        <div>
-            <h1 class="text-lg font-bold tracking-wide">REFORMAS MÁRMOL</h1>
-            <p class="text-xs text-red-200">Control de Personal</p>
+    <!-- Header con Logotipo Corporativo Limpio -->
+    <header class="bg-white text-slate-800 p-3 shadow-md sticky top-0 z-50 flex justify-between items-center w-full border-b border-slate-200">
+        <div class="flex items-center space-x-2">
+            <!-- Icono/Logo de Reformas Mármol -->
+            <div class="bg-white p-1 rounded-lg shadow-sm border border-slate-100 flex items-center justify-center">
+                <svg class="h-9 w-auto" viewBox="0 0 200 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M35 35 C 45 10, 130 5, 155 25 C 165 33, 145 42, 135 38 C 115 22, 60 25, 45 35 Z" fill="#E53935"/>
+                    <path d="M45 28 C 65 18, 115 18, 138 30" stroke="#9E9E9E" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M25 45 C 15 60, 85 70, 110 52 C 120 45, 105 38, 95 42 C 75 52, 35 48, 25 45 Z" fill="#E53935"/>
+                    <path d="M32 50 C 42 60, 75 58, 92 48" stroke="#9E9E9E" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div>
+                <span class="text-xs font-bold text-red-600 uppercase tracking-wider block">REFORMAS MÁRMOL</span>
+                <span class="text-[10px] text-slate-400">Control de Obras y Personal</span>
+            </div>
         </div>
-        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-800 border border-red-400 text-xs px-3 py-2 rounded-lg font-bold shadow text-white">
+        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-700 hover:bg-red-800 text-white text-xs px-3 py-2 rounded-xl font-bold shadow transition">
             🔒 Vista Consulta
         </button>
     </header>
@@ -46,7 +57,7 @@
 
         <!-- TAB 1: DESPLIEGUE DIARIO -->
         <div id="tab-despliegue" class="tab-content active space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 w-full">
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha de Despliegue</label>
                 <input type="date" id="fechaDespliegue" class="w-full p-3 border rounded-xl bg-slate-50 text-base font-bold text-slate-700" onchange="cargarDespliegue()">
             </div>
@@ -57,7 +68,7 @@
         <div id="tab-plantilla" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold text-slate-800">Trabajadores</h2>
-                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3 py-2.5 rounded-xl font-bold shadow">+ Operario</button>
+                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3.5 py-2.5 rounded-xl font-bold shadow">+ Operario</button>
             </div>
             <div id="listaPlantilla" class="space-y-3 w-full"></div>
         </div>
@@ -66,7 +77,7 @@
         <div id="tab-obras" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold text-slate-800">Obras</h2>
-                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3 py-2.5 rounded-xl font-bold shadow">+ Nueva Obra</button>
+                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3.5 py-2.5 rounded-xl font-bold shadow">+ Nueva Obra</button>
             </div>
             <div id="listaObras" class="space-y-3 w-full"></div>
         </div>
@@ -74,7 +85,7 @@
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
             <h2 class="text-xl font-bold text-slate-800">Fichajes de Hoy</h2>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3 w-full">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full">
                 <select id="fichajeTrabajador" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
                 <select id="fichajeObra" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
                 <div class="grid grid-cols-2 gap-2 pt-2">
@@ -88,7 +99,7 @@
         <!-- TAB 5: AJUSTES -->
         <div id="tab-ajustes" class="tab-content space-y-4">
             <h2 class="text-xl font-bold text-slate-800">Ajustes</h2>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3 w-full">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full">
                 <p class="text-sm text-slate-600 font-medium">Opciones de Administrador:</p>
                 <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-3 rounded-xl text-sm font-bold">Cerrar Sesión Admin</button>
             </div>
@@ -96,7 +107,7 @@
 
     </main>
 
-    <!-- Barra Inferior Grande para Móvil -->
+    <!-- Barra Inferior de Navegación -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-2 shadow-2xl z-40 w-full">
         <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center py-1 px-2 text-xs font-bold">
             <span class="text-xl">📅</span> Diario
@@ -184,7 +195,7 @@
             if (document.getElementById('inputPin').value === '1234') {
                 isAdmin = true;
                 document.getElementById('adminToggleBtn').innerText = "🔓 Admin Activo";
-                document.getElementById('adminToggleBtn').classList.replace('bg-red-800', 'bg-emerald-700');
+                document.getElementById('adminToggleBtn').className = "bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
                 document.getElementById('btnNuevoTrabajador').classList.remove('hidden');
                 document.getElementById('btnNuevaObra').classList.remove('hidden');
                 cerrarAdminModal();
@@ -199,7 +210,7 @@
         function cerrarSesionAdmin() {
             isAdmin = false;
             document.getElementById('adminToggleBtn').innerText = "🔒 Vista Consulta";
-            document.getElementById('adminToggleBtn').classList.replace('bg-emerald-700', 'bg-red-800');
+            document.getElementById('adminToggleBtn').className = "bg-red-700 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
             document.getElementById('btnNuevoTrabajador').classList.add('hidden');
             document.getElementById('btnNuevaObra').classList.add('hidden');
             renderPlantilla();
