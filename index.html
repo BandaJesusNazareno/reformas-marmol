@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDwqlioQLvSGV9sfX0TK_Dx94NdiqPPJto",
@@ -21,7 +21,7 @@
 
         const app = initializeApp(firebaseConfig);
         window.db = getFirestore(app);
-        window.fs = { collection, onSnapshot, addDoc, deleteDoc, doc, setDoc };
+        window.fs = { collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDocs, query, where };
     </script>
     <style>
         .tab-content { display: none; }
@@ -300,7 +300,7 @@
             cont.innerHTML = obras.map(o => `
                 <div class="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
                     <div><p class="font-bold text-base text-slate-800">${o.nombre}</p><p class="text-xs text-slate-500 font-medium">📍 ${o.direccion}</p></div>
-                    ${isAdmin ? `<button onclick="borrarObra('${o.id}')" class="text-red-500 text-base p-1">🗑️</button>` : ''}
+                    ${isAdmin ? `<button onclick="borrarObra('${o.id}', '${o.nombre.replace(/'/g, "\\'")}')" class="text-red-500 text-base p-1">🗑️</button>` : ''}
                 </div>
             `).join('');
         }
@@ -389,9 +389,31 @@
                 document.getElementById('direccionObraInput').value = '';
             }
         }
-        async function borrarObra(id) { 
+
+        // Función para borrar obra y sus fichajes asociados automáticamente
+        async function borrarObra(idObra, nombreObra) {
             if(!isAdmin) return;
-            await window.fs.deleteDoc(window.fs.doc(window.db, "obras", id)); 
+            if(!confirm(`¿Estás seguro de eliminar la obra "${nombreObra}"? Se borrarán también todos sus fichajes asociados.`)) return;
+
+            try {
+                // 1. Borrar la obra principal
+                await window.fs.deleteDoc(window.fs.doc(window.db, "obras", idObra));
+
+                // 2. Buscar y borrar los fichajes asociados a esta obra
+                let q = window.fs.query(window.fs.collection(window.db, "fichajes"), window.fs.where("obra", "==", nombreObra));
+                let querySnapshot = await window.fs.getDocs(q);
+                
+                let promesasBorrado = [];
+                querySnapshot.forEach((docFichaje) => {
+                    promesasBorrado.push(window.fs.deleteDoc(window.fs.doc(window.db, "fichajes", docFichaje.id)));
+                });
+                
+                await Promise.all(promesasBorrado);
+                alert("Obra y sus fichajes eliminados correctamente.");
+            } catch (error) {
+                console.error("Error al eliminar obra y fichajes: ", error);
+                alert("Hubo un error al eliminar los datos.");
+            }
         }
 
         function poblarSelects() {
