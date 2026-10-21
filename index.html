@@ -84,7 +84,7 @@
 
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
-            <h2 class="text-xl font-bold text-slate-800">Fichajes de Hoy</h2>
+            <h2 class="text-xl font-bold text-slate-800">Control de Fichajes</h2>
             <!-- Panel de Fichaje protegido: Solo visible y operativo para Administradores -->
             <div id="panelFichajeAdmin" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full hidden">
                 <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2.5 rounded-xl font-medium mb-1">
@@ -103,7 +103,16 @@
                 <p class="font-bold text-slate-700 text-sm">Registro de Fichajes Restringido</p>
                 <p class="text-xs text-slate-500">Solo el administrador puede registrar entradas y salidas. Pulse en "Vista Consulta" arriba a la derecha e introduzca el PIN.</p>
             </div>
-            <div id="historialFichajes" class="space-y-2 w-full pt-2"></div>
+
+            <!-- Filtro por Obra para ver los fichajes -->
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 w-full flex items-center justify-between space-x-2">
+                <label class="text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Filtrar Obra:</label>
+                <select id="filtroObraFichajes" onchange="renderFichajes()" class="w-full p-2 border rounded-xl text-xs bg-slate-50 font-semibold">
+                    <option value="TODAS">Todas las obras</option>
+                </select>
+            </div>
+
+            <div id="historialFichajes" class="space-y-2 w-full pt-1"></div>
         </div>
 
         <!-- TAB 5: AJUSTES -->
@@ -390,16 +399,12 @@
             }
         }
 
-        // Función para borrar obra y sus fichajes asociados automáticamente
         async function borrarObra(idObra, nombreObra) {
             if(!isAdmin) return;
             if(!confirm(`¿Estás seguro de eliminar la obra "${nombreObra}"? Se borrarán también todos sus fichajes asociados.`)) return;
 
             try {
-                // 1. Borrar la obra principal
                 await window.fs.deleteDoc(window.fs.doc(window.db, "obras", idObra));
-
-                // 2. Buscar y borrar los fichajes asociados a esta obra
                 let q = window.fs.query(window.fs.collection(window.db, "fichajes"), window.fs.where("obra", "==", nombreObra));
                 let querySnapshot = await window.fs.getDocs(q);
                 
@@ -417,8 +422,15 @@
         }
 
         function poblarSelects() {
+            // Select de fichaje
             document.getElementById('fichajeTrabajador').innerHTML = trabajadores.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
             document.getElementById('fichajeObra').innerHTML = obras.map(o => `<option value="${o.id}">${o.nombre}</option>`).join('');
+
+            // Select de filtro en fichajes
+            const filtroSelect = document.getElementById('filtroObraFichajes');
+            let obraSeleccionadaActual = filtroSelect.value;
+            filtroSelect.innerHTML = '<option value="TODAS">Todas las obras</option>' + obras.map(o => `<option value="${o.nombre}">${o.nombre}</option>`).join('');
+            if(obraSeleccionadaActual) filtroSelect.value = obraSeleccionadaActual;
         }
 
         async function registrarFichaje(tipo) {
@@ -442,7 +454,20 @@
         }
 
         function renderFichajes() {
-            document.getElementById('historialFichajes').innerHTML = fichajes.map(f => `
+            const filtro = document.getElementById('filtroObraFichajes').value;
+            let fichajesFiltrados = fichajes;
+
+            if (filtro && filtro !== 'TODAS') {
+                fichajesFiltrados = fichajes.filter(f => f.obra === filtro);
+            }
+
+            const cont = document.getElementById('historialFichajes');
+            if(fichajesFiltrados.length === 0) {
+                cont.innerHTML = '<p class="text-sm text-slate-400 text-center py-6">No hay fichajes registrados para esta obra.</p>';
+                return;
+            }
+
+            cont.innerHTML = fichajesFiltrados.map(f => `
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs shadow-sm">
                     <div>
                         <p class="font-bold text-sm text-slate-800">${f.trabajador}</p>
