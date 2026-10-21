@@ -85,7 +85,11 @@
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
             <h2 class="text-xl font-bold text-slate-800">Fichajes de Hoy</h2>
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full">
+            <!-- Panel de Fichaje protegido: Solo visible y operativo para Administradores -->
+            <div id="panelFichajeAdmin" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3 w-full hidden">
+                <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2.5 rounded-xl font-medium mb-1">
+                    ⚠️ Panel exclusivo de Administración para registrar fichajes.
+                </div>
                 <select id="fichajeTrabajador" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
                 <select id="fichajeObra" class="w-full p-3 border rounded-xl text-sm bg-slate-50 font-semibold"></select>
                 <div class="grid grid-cols-2 gap-2 pt-2">
@@ -93,7 +97,13 @@
                     <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 text-white py-3 rounded-xl text-sm font-bold shadow">Fichar Salida 🔴</button>
                 </div>
             </div>
-            <div id="historialFichajes" class="space-y-2 w-full"></div>
+            <!-- Mensaje bloqueado para personal en modo consulta -->
+            <div id="panelFichajeBloqueado" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2 w-full">
+                <span class="text-3xl">🔒</span>
+                <p class="font-bold text-slate-700 text-sm">Registro de Fichajes Restringido</p>
+                <p class="text-xs text-slate-500">Solo el administrador puede registrar entradas y salidas. Pulse en "Vista Consulta" arriba a la derecha e introduzca el PIN.</p>
+            </div>
+            <div id="historialFichajes" class="space-y-2 w-full pt-2"></div>
         </div>
 
         <!-- TAB 5: AJUSTES -->
@@ -178,6 +188,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fechaDespliegue').value = new Date().toISOString().split('T')[0];
+            actualizarPermisosUI();
             setTimeout(iniciarSincronizacion, 1000);
         });
 
@@ -197,10 +208,9 @@
                 let btn = document.getElementById('adminToggleBtn');
                 btn.innerText = "🔓 Admin Activo";
                 btn.className = "bg-emerald-700 hover:bg-emerald-800 border border-emerald-400 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
-                document.getElementById('btnNuevoTrabajador').classList.remove('hidden');
-                document.getElementById('btnNuevaObra').classList.remove('hidden');
                 cerrarAdminModal();
                 document.getElementById('inputPin').value = '';
+                actualizarPermisosUI();
                 renderPlantilla();
                 renderObras();
                 cargarDespliegue();
@@ -214,13 +224,31 @@
             let btn = document.getElementById('adminToggleBtn');
             btn.innerText = "🔒 Vista Consulta";
             btn.className = "bg-red-800 border border-red-500 hover:bg-red-900 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
-            document.getElementById('btnNuevoTrabajador').classList.add('hidden');
-            document.getElementById('btnNuevaObra').classList.add('hidden');
+            actualizarPermisosUI();
             renderPlantilla();
             renderObras();
             cargarDespliegue();
             cambiarTab('despliegue');
             alert("Sesión cerrada correctamente");
+        }
+
+        function actualizarPermisosUI() {
+            const btnTrabajador = document.getElementById('btnNuevoTrabajador');
+            const btnObra = document.getElementById('btnNuevaObra');
+            const panelFichajeAdmin = document.getElementById('panelFichajeAdmin');
+            const panelFichajeBloqueado = document.getElementById('panelFichajeBloqueado');
+
+            if (isAdmin) {
+                btnTrabajador.classList.remove('hidden');
+                btnObra.classList.remove('hidden');
+                panelFichajeAdmin.classList.remove('hidden');
+                panelFichajeBloqueado.classList.add('hidden');
+            } else {
+                btnTrabajador.classList.add('hidden');
+                btnObra.classList.add('hidden');
+                panelFichajeAdmin.classList.add('hidden');
+                panelFichajeBloqueado.classList.remove('hidden');
+            }
         }
 
         function cambiarTab(id) {
@@ -303,6 +331,7 @@
         }
 
         async function asignarOperario(fecha, obraId) {
+            if(!isAdmin) return alert("Acceso restringido al administrador.");
             if(trabajadores.length === 0) return alert("Añade trabajadores primero.");
             let txt = trabajadores.map((t, i) => `${i + 1}. ${t.nombre}`).join('\n');
             let num = prompt(`Escribe el número del trabajador a enviar:\n\n${txt}`);
@@ -317,6 +346,7 @@
         }
 
         function abrirModalTrabajador() { 
+            if(!isAdmin) return;
             document.getElementById('modalTrabajador').classList.remove('hidden'); 
             document.getElementById('modalTrabajador').classList.add('flex'); 
         }
@@ -325,6 +355,7 @@
             document.getElementById('modalTrabajador').classList.remove('flex'); 
         }
         async function guardarTrabajador() {
+            if(!isAdmin) return;
             let nombre = document.getElementById('nombreTrabajador').value;
             let especialidad = document.getElementById('especialidadTrabajador').value;
             if(nombre) {
@@ -333,9 +364,13 @@
                 document.getElementById('nombreTrabajador').value = '';
             }
         }
-        async function borrarTrabajador(id) { await window.fs.deleteDoc(window.fs.doc(window.db, "trabajadores", id)); }
+        async function borrarTrabajador(id) { 
+            if(!isAdmin) return;
+            await window.fs.deleteDoc(window.fs.doc(window.db, "trabajadores", id)); 
+        }
 
         function abrirModalObra() { 
+            if(!isAdmin) return;
             document.getElementById('modalObra').classList.remove('hidden'); 
             document.getElementById('modalObra').classList.add('flex'); 
         }
@@ -344,6 +379,7 @@
             document.getElementById('modalObra').classList.remove('flex'); 
         }
         async function guardarObra() {
+            if(!isAdmin) return;
             let nombre = document.getElementById('nombreObraInput').value;
             let direccion = document.getElementById('direccionObraInput').value;
             if(nombre) {
@@ -353,7 +389,10 @@
                 document.getElementById('direccionObraInput').value = '';
             }
         }
-        async function borrarObra(id) { await window.fs.deleteDoc(window.fs.doc(window.db, "obras", id)); }
+        async function borrarObra(id) { 
+            if(!isAdmin) return;
+            await window.fs.deleteDoc(window.fs.doc(window.db, "obras", id)); 
+        }
 
         function poblarSelects() {
             document.getElementById('fichajeTrabajador').innerHTML = trabajadores.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
@@ -361,6 +400,7 @@
         }
 
         async function registrarFichaje(tipo) {
+            if(!isAdmin) return alert("Acceso restringido al administrador.");
             let t = trabajadores.find(x => x.id === document.getElementById('fichajeTrabajador').value);
             let o = obras.find(x => x.id === document.getElementById('fichajeObra').value);
             if(t && o) {
