@@ -194,11 +194,13 @@
         function verificarPin() {
             if (document.getElementById('inputPin').value === '1234') {
                 isAdmin = true;
-                document.getElementById('adminToggleBtn').innerText = "🔓 Admin Activo";
-                document.getElementById('adminToggleBtn').className = "bg-emerald-700 hover:bg-emerald-800 border border-emerald-400 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
+                let btn = document.getElementById('adminToggleBtn');
+                btn.innerText = "🔓 Admin Activo";
+                btn.className = "bg-emerald-700 hover:bg-emerald-800 border border-emerald-400 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
                 document.getElementById('btnNuevoTrabajador').classList.remove('hidden');
                 document.getElementById('btnNuevaObra').classList.remove('hidden');
                 cerrarAdminModal();
+                document.getElementById('inputPin').value = '';
                 renderPlantilla();
                 renderObras();
                 cargarDespliegue();
@@ -209,14 +211,16 @@
 
         function cerrarSesionAdmin() {
             isAdmin = false;
-            document.getElementById('adminToggleBtn').innerText = "🔒 Vista Consulta";
-            document.getElementById('adminToggleBtn').className = "bg-red-800 border border-red-500 hover:bg-red-900 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
+            let btn = document.getElementById('adminToggleBtn');
+            btn.innerText = "🔒 Vista Consulta";
+            btn.className = "bg-red-800 border border-red-500 hover:bg-red-900 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
             document.getElementById('btnNuevoTrabajador').classList.add('hidden');
             document.getElementById('btnNuevaObra').classList.add('hidden');
             renderPlantilla();
             renderObras();
             cargarDespliegue();
-            alert("Sesión cerrada");
+            cambiarTab('despliegue');
+            alert("Sesión cerrada correctamente");
         }
 
         function cambiarTab(id) {
