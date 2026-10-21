@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reformas Mármol - Gestión de Personal</title>
+    <title>Reformas Mármol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDocs 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDwqlioQLvSGV9sfX0TK_Dx94NdiqPPJto",
@@ -22,9 +20,8 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        window.db = db;
-        window.fs = { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDocs };
+        window.db = getFirestore(app);
+        window.fs = { collection, onSnapshot, addDoc, deleteDoc, doc, setDoc };
     </script>
     <style>
         .tab-content { display: none; }
@@ -39,11 +36,9 @@
             <h1 class="text-xl font-bold tracking-wide">REFORMAS MÁRMOL</h1>
             <p class="text-xs text-red-200">Control de Personal y Obras</p>
         </div>
-        <div>
-            <button id="adminToggleBtn" onclick="toggleAdminModal()" class="bg-red-800 hover:bg-red-900 border border-red-500 text-xs px-3 py-1.5 rounded font-semibold transition">
-                🔒 Vista Consulta
-            </button>
-        </div>
+        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-800 border border-red-400 text-xs px-3 py-2 rounded-lg font-bold shadow">
+            🔒 Vista Consulta
+        </button>
     </header>
 
     <!-- Main Container -->
@@ -55,44 +50,36 @@
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Despliegue</label>
                 <input type="date" id="fechaDespliegue" class="w-full p-2 border rounded-lg bg-slate-50 text-sm font-semibold" onchange="cargarDespliegue()">
             </div>
-
-            <div id="listaObrasDespliegue" class="space-y-4">
-                <p class="text-xs text-slate-400 text-center py-4">Cargando datos...</p>
-            </div>
+            <div id="listaObrasDespliegue" class="space-y-4"></div>
         </div>
 
         <!-- TAB 2: PLANTILLA -->
         <div id="tab-plantilla" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-bold text-slate-700">Trabajadores</h2>
-                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow hover:bg-red-700">+ Añadir Operario</button>
+                <button onclick="abrirModalTrabajador()" id="btnNuevoTrabajador" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow">+ Añadir Operario</button>
             </div>
-            <div id="listaPlantilla" class="space-y-2">
-                <p class="text-xs text-slate-400 text-center py-4">No hay operarios registrados aún.</p>
-            </div>
+            <div id="listaPlantilla" class="space-y-2"></div>
         </div>
 
         <!-- TAB 3: OBRAS -->
         <div id="tab-obras" class="tab-content space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-700">Listado de Obras</h2>
-                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow hover:bg-red-700">+ Nueva Obra</button>
+                <h2 class="text-lg font-bold text-slate-700">Obras</h2>
+                <button onclick="abrirModalObra()" id="btnNuevaObra" class="hidden bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-semibold shadow">+ Nueva Obra</button>
             </div>
-            <div id="listaObras" class="space-y-3">
-                <p class="text-xs text-slate-400 text-center py-4">No hay obras registradas aún.</p>
-            </div>
+            <div id="listaObras" class="space-y-3"></div>
         </div>
 
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
-            <h2 class="text-lg font-bold text-slate-700">Control de Horarios y Fichajes</h2>
+            <h2 class="text-lg font-bold text-slate-700">Fichajes de Hoy</h2>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <p class="text-xs text-slate-500">Selecciona operario y obra para registrar entrada o salida:</p>
                 <select id="fichajeTrabajador" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
                 <select id="fichajeObra" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
                 <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button onclick="registrarFichaje('ENTRADA')" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Entrada 🟢</button>
-                    <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Salida 🔴</button>
+                    <button onclick="registrarFichaje('ENTRADA')" class="bg-emerald-600 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Entrada 🟢</button>
+                    <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Salida 🔴</button>
                 </div>
             </div>
             <div id="historialFichajes" class="space-y-2"></div>
@@ -100,14 +87,10 @@
 
         <!-- TAB 5: AJUSTES -->
         <div id="tab-ajustes" class="tab-content space-y-4">
-            <h2 class="text-lg font-bold text-slate-700">Ajustes de Administrador</h2>
+            <h2 class="text-lg font-bold text-slate-700">Ajustes</h2>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <p class="text-xs text-slate-500">Modificar contraseña de Administrador:</p>
-                <input type="password" id="nuevoPinAdmin" placeholder="Nuevo PIN (ej. 1234)" class="w-full p-2 border rounded-lg text-sm">
-                <button onclick="cambiarPin()" class="w-full bg-slate-800 text-white py-2 rounded-lg text-sm font-bold">Guardar Nueva Clave</button>
-                <div class="border-t pt-3 mt-3">
-                    <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-2 rounded-lg text-sm font-bold">Cerrar Sesión Admin</button>
-                </div>
+                <p class="text-xs text-slate-500">Estado de la sesión:</p>
+                <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-2 rounded-lg text-sm font-bold">Cerrar Sesión Admin</button>
             </div>
         </div>
 
@@ -115,35 +98,30 @@
 
     <!-- Bottom Navigation Bar -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 shadow-lg z-40 max-w-md mx-auto">
-        <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center text-xs font-semibold" data-target="despliegue">
+        <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center text-xs font-semibold">
             <span class="text-lg">📅</span> Diario
         </button>
-        <button onclick="cambiarTab('plantilla')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="plantilla">
+        <button onclick="cambiarTab('plantilla')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
             <span class="text-lg">👷</span> Plantilla
         </button>
-        <button onclick="cambiarTab('obras')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="obras">
+        <button onclick="cambiarTab('obras')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
             <span class="text-lg">🏗️</span> Obras
         </button>
-        <button onclick="cambiarTab('fichajes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="fichajes">
+        <button onclick="cambiarTab('fichajes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
             <span class="text-lg">⏱️</span> Fichajes
         </button>
-        <button onclick="cambiarTab('ajustes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="ajustes">
+        <button onclick="cambiarTab('ajustes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold">
             <span class="text-lg">⚙️</span> Ajustes
         </button>
     </nav>
 
-    <!-- Modal Login Admin -->
+    <!-- Modal Admin -->
     <div id="adminModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800">Acceso Administrador</h3>
-            <p class="text-xs text-slate-500">Introduce el PIN de seguridad:</p>
-            <input type="password" id="inputPin" placeholder="PIN (1234)" class="w-full p-3 border rounded-xl text-center text-lg tracking-widest font-bold">
-            <div class="flex items-center space-x-2">
-                <input type="checkbox" id="recordarPin" class="rounded text-red-600">
-                <label for="recordarPin" class="text-xs text-slate-600">Recordar en este dispositivo</label>
-            </div>
-            <div class="grid grid-cols-2 gap-2 pt-2">
-                <button onclick="cerrarModalAdmin()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
+            <input type="password" id="inputPin" placeholder="PIN (1234)" class="w-full p-3 border rounded-xl text-center text-lg font-bold">
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="cerrarAdminModal()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
                 <button onclick="verificarPin()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Entrar</button>
             </div>
         </div>
@@ -160,12 +138,7 @@
                 <option value="Pintor">Pintor</option>
                 <option value="Peón">Peón</option>
             </select>
-            <select id="estadoTrabajador" class="w-full p-2.5 border rounded-xl text-sm">
-                <option value="Presente">Disponible / Presente</option>
-                <option value="Ausente">Ausente</option>
-                <option value="Baja">De Baja</option>
-            </select>
-            <div class="grid grid-cols-2 gap-2 pt-2">
+            <div class="grid grid-cols-2 gap-2">
                 <button onclick="cerrarModalTrabajador()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
                 <button onclick="guardarTrabajador()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
             </div>
@@ -176,9 +149,9 @@
     <div id="modalObra" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800">Nueva Obra</h3>
-            <input type="text" id="nombreObraInput" placeholder="Nombre de Obra / Cliente" class="w-full p-2.5 border rounded-xl text-sm">
-            <input type="text" id="direccionObraInput" placeholder="Dirección completa" class="w-full p-2.5 border rounded-xl text-sm">
-            <div class="grid grid-cols-2 gap-2 pt-2">
+            <input type="text" id="nombreObraInput" placeholder="Nombre de Obra" class="w-full p-2.5 border rounded-xl text-sm">
+            <input type="text" id="direccionObraInput" placeholder="Dirección" class="w-full p-2.5 border rounded-xl text-sm">
+            <div class="grid grid-cols-2 gap-2">
                 <button onclick="cerrarModalObra()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
                 <button onclick="guardarObra()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
             </div>
@@ -187,8 +160,6 @@
 
     <script>
         let isAdmin = false;
-        let pinAdmin = localStorage.getItem('rm_pin') || '1234';
-
         let trabajadores = [];
         let obras = [];
         let asignaciones = {};
@@ -196,29 +167,184 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fechaDespliegue').value = new Date().toISOString().split('T')[0];
-            
-            if (localStorage.getItem('rm_admin_session') === 'true') {
-                isAdmin = true;
-                actualizarInterfazAdmin();
-            }
-
-            setTimeout(inicializarSincronizacion, 1000);
+            setTimeout(iniciarSincronizacion, 1000);
         });
 
-        function inicializarSincronizacion() {
-            if(!window.db) return;
+        function abrirAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminModal').classList.add('flex');
+        }
 
-            window.fs.onSnapshot(window.fs.collection(window.db, "trabajadores"), (snapshot) => {
-                trabajadores = [];
-                snapshot.forEach((doc) => trabajadores.push({ id: doc.id, ...doc.data() }));
+        function cerrarAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            document.getElementById('adminModal').classList.remove('flex');
+        }
+
+        function verificarPin() {
+            if (document.getElementById('inputPin').value === '1234') {
+                isAdmin = true;
+                document.getElementById('adminToggleBtn').innerText = "🔓 Admin Activo";
+                document.getElementById('adminToggleBtn').classList.replace('bg-red-800', 'bg-emerald-700');
+                document.getElementById('btnNuevoTrabajador').classList.remove('hidden');
+                document.getElementById('btnNuevaObra').classList.remove('hidden');
+                cerrarAdminModal();
                 renderPlantilla();
-                poblarSelectsFichajes();
+                renderObras();
+                cargarDespliegue();
+            } else {
+                alert("PIN incorrecto. Usa: 1234");
+            }
+        }
+
+        function cerrarSesionAdmin() {
+            isAdmin = false;
+            document.getElementById('adminToggleBtn').innerText = "🔒 Vista Consulta";
+            document.getElementById('adminToggleBtn').classList.replace('bg-emerald-700', 'bg-red-800');
+            document.getElementById('btnNuevoTrabajador').classList.add('hidden');
+            document.getElementById('btnNuevaObra').classList.add('hidden');
+            renderPlantilla();
+            renderObras();
+            cargarDespliegue();
+            alert("Sesión admin cerrada");
+        }
+
+        function cambiarTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+        }
+
+        function iniciarSincronizacion() {
+            if(!window.db) return;
+            window.fs.onSnapshot(window.fs.collection(window.db, "trabajadores"), snap => {
+                trabajadores = [];
+                snap.forEach(doc => trabajadores.push({ id: doc.id, ...doc.data() }));
+                renderPlantilla();
+                poblarSelects();
+            });
+            window.fs.onSnapshot(window.fs.collection(window.db, "obras"), snap => {
+                obras = [];
+                snap.forEach(doc => obras.push({ id: doc.id, ...doc.data() }));
+                renderObras();
+                poblarSelects();
                 cargarDespliegue();
             });
+            window.fs.onSnapshot(window.fs.collection(window.db, "asignaciones"), snap => {
+                asignaciones = {};
+                snap.forEach(doc => asignaciones[doc.id] = doc.data());
+                cargarDespliegue();
+            });
+            window.fs.onSnapshot(window.fs.collection(window.db, "fichajes"), snap => {
+                fichajes = [];
+                snap.forEach(doc => fichajes.push({ id: doc.id, ...doc.data() }));
+                renderFichajes();
+            });
+        }
 
-            window.fs.onSnapshot(window.fs.collection(window.db, "obras"), (snapshot) => {
-                obras = [];
-                snapshot.forEach((doc) => obras.push({ id: doc.id, ...doc.data() }));
-                renderObras();
-                poblarSelectsFichajes();
-                cargarDes
+        function renderPlantilla() {
+            const cont = document.getElementById('listaPlantilla');
+            if(trabajadores.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No hay operarios registrados aún.</p>';
+            cont.innerHTML = trabajadores.map(t => `
+                <div class="bg-white p-3 rounded-xl border flex justify-between items-center">
+                    <div><p class="font-bold text-sm">${t.nombre}</p><p class="text-xs text-slate-500">${t.especialidad}</p></div>
+                    ${isAdmin ? `<button onclick="borrarTrabajador('${t.id}')" class="text-red-500 text-xs">🗑️</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderObras() {
+            const cont = document.getElementById('listaObras');
+            if(obras.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No hay obras registradas aún.</p>';
+            cont.innerHTML = obras.map(o => `
+                <div class="bg-white p-3 rounded-xl border flex justify-between items-center">
+                    <div><p class="font-bold text-sm">${o.nombre}</p><p class="text-xs text-slate-500">📍 ${o.direccion}</p></div>
+                    ${isAdmin ? `<button onclick="borrarObra('${o.id}')" class="text-red-500 text-xs">🗑️</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function cargarDespliegue() {
+            const fecha = document.getElementById('fechaDespliegue').value;
+            const cont = document.getElementById('listaObrasDespliegue');
+            if(obras.length === 0) return cont.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Añade obras desde la pestaña "Obras".</p>';
+            
+            let datosDia = asignaciones[fecha] || {};
+            cont.innerHTML = obras.map(o => {
+                let ids = datosDia[o.id] || [];
+                let listaNombres = ids.map(id => {
+                    let t = trabajadores.find(x => x.id === id);
+                    return t ? `<span class="bg-red-50 text-red-700 border border-red-200 text-xs px-2 py-1 rounded-lg font-semibold mr-1 mb-1 inline-block">${t.nombre}</span>` : '';
+                }).join('');
+
+                return `
+                    <div class="bg-white p-4 rounded-xl border space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div><p class="font-bold text-sm">🏗️ ${o.nombre}</p><p class="text-xs text-slate-500">${o.direccion}</p></div>
+                            ${isAdmin ? `<button onclick="asignarOperario('${fecha}', '${o.id}')" class="bg-slate-100 text-xs px-2 py-1 rounded-lg font-bold">+ Asignar</button>` : ''}
+                        </div>
+                        <div class="pt-2 border-t flex flex-wrap">${listaNombres || '<span class="text-xs text-slate-400 italic">Sin operarios asignados</span>'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function asignarOperario(fecha, obraId) {
+            if(trabajadores.length === 0) return alert("Añade trabajadores primero.");
+            let txt = trabajadores.map((t, i) => `${i + 1}. ${t.nombre}`).join('\n');
+            let num = prompt(`Escribe el número del trabajador a enviar:\n\n${txt}`);
+            let idx = parseInt(num) - 1;
+            if(trabajadores[idx]) {
+                let datosDia = asignaciones[fecha] || {};
+                let ids = datosDia[obraId] || [];
+                if(!ids.includes(trabajadores[idx].id)) ids.push(trabajadores[idx].id);
+                datosDia[obraId] = ids;
+                await window.fs.setDoc(window.fs.doc(window.db, "asignaciones", fecha), datosDia);
+            }
+        }
+
+        function abrirModalTrabajador() { 
+            document.getElementById('modalTrabajador').classList.remove('hidden'); 
+            document.getElementById('modalTrabajador').classList.add('flex'); 
+        }
+        function cerrarModalTrabajador() { 
+            document.getElementById('modalTrabajador').classList.add('hidden'); 
+            document.getElementById('modalTrabajador').classList.remove('flex'); 
+        }
+        async function guardarTrabajador() {
+            let nombre = document.getElementById('nombreTrabajador').value;
+            let especialidad = document.getElementById('especialidadTrabajador').value;
+            if(nombre) {
+                await window.fs.addDoc(window.fs.collection(window.db, "trabajadores"), { nombre, especialidad });
+                cerrarModalTrabajador();
+                document.getElementById('nombreTrabajador').value = '';
+            }
+        }
+        async function borrarTrabajador(id) { await window.fs.deleteDoc(window.fs.doc(window.db, "trabajadores", id)); }
+
+        function abrirModalObra() { 
+            document.getElementById('modalObra').classList.remove('hidden'); 
+            document.getElementById('modalObra').classList.add('flex'); 
+        }
+        function cerrarModalObra() { 
+            document.getElementById('modalObra').classList.add('hidden'); 
+            document.getElementById('modalObra').classList.remove('flex'); 
+        }
+        async function guardarObra() {
+            let nombre = document.getElementById('nombreObraInput').value;
+            let direccion = document.getElementById('direccionObraInput').value;
+            if(nombre) {
+                await window.fs.addDoc(window.fs.collection(window.db, "obras"), { nombre, direccion });
+                cerrarModalObra();
+                document.getElementById('nombreObraInput').value = '';
+                document.getElementById('direccionObraInput').value = '';
+            }
+        }
+        async function borrarObra(id) { await window.fs.deleteDoc(window.fs.doc(window.db, "obras", id)); }
+
+        function poblarSelects() {
+            document.getElementById('fichajeTrabajador').innerHTML = trabajadores.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
+            document.getElementById('fichajeObra').innerHTML = obras.map(o => `<option value="${o.id}">${o.nombre}</option>`).join('');
+        }
+
+        async function registrarFichaje(tipo) {
+            let t = trabajadores.find(x => x.id === document.getElementById('fichajeTrabajador').value);
+            let o = obras.find(x => x.id === document.getElementById('fichajeObra').value
