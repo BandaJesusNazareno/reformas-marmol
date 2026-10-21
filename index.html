@@ -30,12 +30,12 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24 w-full min-h-screen">
 
-    <!-- Header con Logotipo Corporativo Limpio -->
-    <header class="bg-white text-slate-800 p-3 shadow-md sticky top-0 z-50 flex justify-between items-center w-full border-b border-slate-200">
+    <!-- Header Rojo Corporativo Original -->
+    <header class="bg-red-700 text-white p-3 shadow-md sticky top-0 z-50 flex justify-between items-center w-full">
         <div class="flex items-center space-x-2">
             <!-- Icono/Logo de Reformas Mármol -->
-            <div class="bg-white p-1 rounded-lg shadow-sm border border-slate-100 flex items-center justify-center">
-                <svg class="h-9 w-auto" viewBox="0 0 200 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="bg-white p-1 rounded-lg shadow-sm flex items-center justify-center">
+                <svg class="h-8 w-auto" viewBox="0 0 200 70" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M35 35 C 45 10, 130 5, 155 25 C 165 33, 145 42, 135 38 C 115 22, 60 25, 45 35 Z" fill="#E53935"/>
                     <path d="M45 28 C 65 18, 115 18, 138 30" stroke="#9E9E9E" stroke-width="6" stroke-linecap="round"/>
                     <path d="M25 45 C 15 60, 85 70, 110 52 C 120 45, 105 38, 95 42 C 75 52, 35 48, 25 45 Z" fill="#E53935"/>
@@ -43,16 +43,16 @@
                 </svg>
             </div>
             <div>
-                <span class="text-xs font-bold text-red-600 uppercase tracking-wider block">REFORMAS MÁRMOL</span>
-                <span class="text-[10px] text-slate-400">Control de Obras y Personal</span>
+                <h1 class="text-base font-bold tracking-wide leading-tight">REFORMAS MÁRMOL</h1>
+                <p class="text-[11px] text-red-200 leading-tight">Control de Personal y Obras</p>
             </div>
         </div>
-        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-700 hover:bg-red-800 text-white text-xs px-3 py-2 rounded-xl font-bold shadow transition">
+        <button id="adminToggleBtn" onclick="abrirAdminModal()" class="bg-red-800 border border-red-500 hover:bg-red-900 text-white text-xs px-3 py-2 rounded-xl font-bold shadow transition">
             🔒 Vista Consulta
         </button>
     </header>
 
-    <!-- Contenedor Principal (100% Pantalla Móvil) -->
+    <!-- Contenedor Principal -->
     <main class="w-full p-4 space-y-4 max-w-lg mx-auto">
 
         <!-- TAB 1: DESPLIEGUE DIARIO -->
@@ -195,7 +195,7 @@
             if (document.getElementById('inputPin').value === '1234') {
                 isAdmin = true;
                 document.getElementById('adminToggleBtn').innerText = "🔓 Admin Activo";
-                document.getElementById('adminToggleBtn').className = "bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
+                document.getElementById('adminToggleBtn').className = "bg-emerald-700 hover:bg-emerald-800 border border-emerald-400 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
                 document.getElementById('btnNuevoTrabajador').classList.remove('hidden');
                 document.getElementById('btnNuevaObra').classList.remove('hidden');
                 cerrarAdminModal();
@@ -210,7 +210,7 @@
         function cerrarSesionAdmin() {
             isAdmin = false;
             document.getElementById('adminToggleBtn').innerText = "🔒 Vista Consulta";
-            document.getElementById('adminToggleBtn').className = "bg-red-700 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
+            document.getElementById('adminToggleBtn').className = "bg-red-800 border border-red-500 hover:bg-red-900 text-white text-xs px-3 py-2 rounded-xl font-bold shadow";
             document.getElementById('btnNuevoTrabajador').classList.add('hidden');
             document.getElementById('btnNuevaObra').classList.add('hidden');
             renderPlantilla();
