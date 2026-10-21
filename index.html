@@ -11,7 +11,6 @@
             getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDocs 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuración oficial de tu proyecto Firebase (Rmarmol2026)
         const firebaseConfig = {
             apiKey: "AIzaSyDwqlioQLvSGV9sfX0TK_Dx94NdiqPPJto",
             authDomain: "rmarmol2026.firebaseapp.com",
@@ -86,4 +85,140 @@
 
         <!-- TAB 4: FICHAJES -->
         <div id="tab-fichajes" class="tab-content space-y-4">
-            <h2 class="text-lg font-bold text
+            <h2 class="text-lg font-bold text-slate-700">Control de Horarios y Fichajes</h2>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
+                <p class="text-xs text-slate-500">Selecciona operario y obra para registrar entrada o salida:</p>
+                <select id="fichajeTrabajador" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
+                <select id="fichajeObra" class="w-full p-2 border rounded-lg text-sm bg-slate-50"></select>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="registrarFichaje('ENTRADA')" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Entrada 🟢</button>
+                    <button onclick="registrarFichaje('SALIDA')" class="bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg text-sm font-bold shadow">Fichar Salida 🔴</button>
+                </div>
+            </div>
+            <div id="historialFichajes" class="space-y-2"></div>
+        </div>
+
+        <!-- TAB 5: AJUSTES -->
+        <div id="tab-ajustes" class="tab-content space-y-4">
+            <h2 class="text-lg font-bold text-slate-700">Ajustes de Administrador</h2>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
+                <p class="text-xs text-slate-500">Modificar contraseña de Administrador:</p>
+                <input type="password" id="nuevoPinAdmin" placeholder="Nuevo PIN (ej. 1234)" class="w-full p-2 border rounded-lg text-sm">
+                <button onclick="cambiarPin()" class="w-full bg-slate-800 text-white py-2 rounded-lg text-sm font-bold">Guardar Nueva Clave</button>
+                <div class="border-t pt-3 mt-3">
+                    <button onclick="cerrarSesionAdmin()" class="w-full bg-red-100 text-red-700 border border-red-300 py-2 rounded-lg text-sm font-bold">Cerrar Sesión Admin</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 shadow-lg z-40 max-w-md mx-auto">
+        <button onclick="cambiarTab('despliegue')" class="nav-btn text-red-600 flex flex-col items-center text-xs font-semibold" data-target="despliegue">
+            <span class="text-lg">📅</span> Diario
+        </button>
+        <button onclick="cambiarTab('plantilla')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="plantilla">
+            <span class="text-lg">👷</span> Plantilla
+        </button>
+        <button onclick="cambiarTab('obras')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="obras">
+            <span class="text-lg">🏗️</span> Obras
+        </button>
+        <button onclick="cambiarTab('fichajes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="fichajes">
+            <span class="text-lg">⏱️</span> Fichajes
+        </button>
+        <button onclick="cambiarTab('ajustes')" class="nav-btn text-slate-400 flex flex-col items-center text-xs font-semibold" data-target="ajustes">
+            <span class="text-lg">⚙️</span> Ajustes
+        </button>
+    </nav>
+
+    <!-- Modal Login Admin -->
+    <div id="adminModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+            <h3 class="text-lg font-bold text-slate-800">Acceso Administrador</h3>
+            <p class="text-xs text-slate-500">Introduce el PIN de seguridad:</p>
+            <input type="password" id="inputPin" placeholder="PIN (1234)" class="w-full p-3 border rounded-xl text-center text-lg tracking-widest font-bold">
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="recordarPin" class="rounded text-red-600">
+                <label for="recordarPin" class="text-xs text-slate-600">Recordar en este dispositivo</label>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button onclick="cerrarModalAdmin()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
+                <button onclick="verificarPin()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Trabajador -->
+    <div id="modalTrabajador" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+            <h3 class="text-lg font-bold text-slate-800">Nuevo Operario</h3>
+            <input type="text" id="nombreTrabajador" placeholder="Nombre completo" class="w-full p-2.5 border rounded-xl text-sm">
+            <select id="especialidadTrabajador" class="w-full p-2.5 border rounded-xl text-sm">
+                <option value="Albañil">Albañil</option>
+                <option value="Fontanero">Fontanero</option>
+                <option value="Pintor">Pintor</option>
+                <option value="Peón">Peón</option>
+            </select>
+            <select id="estadoTrabajador" class="w-full p-2.5 border rounded-xl text-sm">
+                <option value="Presente">Disponible / Presente</option>
+                <option value="Ausente">Ausente</option>
+                <option value="Baja">De Baja</option>
+            </select>
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button onclick="cerrarModalTrabajador()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
+                <button onclick="guardarTrabajador()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Obra -->
+    <div id="modalObra" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs space-y-4 shadow-xl">
+            <h3 class="text-lg font-bold text-slate-800">Nueva Obra</h3>
+            <input type="text" id="nombreObraInput" placeholder="Nombre de Obra / Cliente" class="w-full p-2.5 border rounded-xl text-sm">
+            <input type="text" id="direccionObraInput" placeholder="Dirección completa" class="w-full p-2.5 border rounded-xl text-sm">
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button onclick="cerrarModalObra()" class="bg-slate-200 text-slate-700 py-2 rounded-xl text-sm font-semibold">Cancelar</button>
+                <button onclick="guardarObra()" class="bg-red-600 text-white py-2 rounded-xl text-sm font-bold">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAdmin = false;
+        let pinAdmin = localStorage.getItem('rm_pin') || '1234';
+
+        let trabajadores = [];
+        let obras = [];
+        let asignaciones = {};
+        let fichajes = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fechaDespliegue').value = new Date().toISOString().split('T')[0];
+            
+            if (localStorage.getItem('rm_admin_session') === 'true') {
+                isAdmin = true;
+                actualizarInterfazAdmin();
+            }
+
+            setTimeout(inicializarSincronizacion, 1000);
+        });
+
+        function inicializarSincronizacion() {
+            if(!window.db) return;
+
+            window.fs.onSnapshot(window.fs.collection(window.db, "trabajadores"), (snapshot) => {
+                trabajadores = [];
+                snapshot.forEach((doc) => trabajadores.push({ id: doc.id, ...doc.data() }));
+                renderPlantilla();
+                poblarSelectsFichajes();
+                cargarDespliegue();
+            });
+
+            window.fs.onSnapshot(window.fs.collection(window.db, "obras"), (snapshot) => {
+                obras = [];
+                snapshot.forEach((doc) => obras.push({ id: doc.id, ...doc.data() }));
+                renderObras();
+                poblarSelectsFichajes();
+                cargarDes
